@@ -1,0 +1,394 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ------------------------------------------------------------------
+   Responsive safety (all languages)
+------------------------------------------------------------------- */
+@layer base {
+  /*
+   * Grid items default to `min-width: auto`, so a single long file name or unbroken string would stretch a whole
+   * column (and the page) past the screen. Zero specificity: any explicit min-w utility still wins.
+   */
+  :where(.grid) > * {
+    min-width: 0;
+  }
+  /* Long words, file names and URLs wrap instead of pushing their card wider than the viewport. */
+  main :where(h1, h2, h3, h4, p, li, dt, dd, label) {
+    overflow-wrap: anywhere;
+  }
+}
+
+/* ------------------------------------------------------------------
+   GoldenPixel design tokens (black + gold cosmic identity)
+------------------------------------------------------------------- */
+:root {
+  --gp-bg: #05050a;
+  --gp-bg-2: #0b0a14;
+  --gp-gold: #f5c542;
+  --gp-gold-soft: #e8b032;
+  --gp-gold-deep: #a67c1d;
+  --gp-ink: #f4efe3;
+  --gp-mist: #9a9384;
+  --gp-line: rgba(245, 197, 66, 0.16);
+  --gp-line-strong: rgba(245, 197, 66, 0.4);
+  --gp-card: rgba(14, 12, 22, 0.66);
+  --gp-glow: 0 0 0 1px rgba(245, 197, 66, 0.35), 0 8px 40px -8px rgba(245, 197, 66, 0.35);
+  --gp-ease: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  color-scheme: dark;
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  min-height: 100dvh;
+  background: var(--gp-bg);
+  color: var(--gp-ink);
+  font-family: 'DM Sans', ui-sans-serif, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+::selection {
+  background: rgba(245, 197, 66, 0.35);
+  color: #fff;
+}
+
+:focus-visible {
+  outline: 2px solid var(--gp-gold);
+  outline-offset: 3px;
+  border-radius: 8px;
+}
+
+/* ------------------------------------------------------------------
+   Galaxy background
+------------------------------------------------------------------- */
+.gp-galaxy {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  pointer-events: none;
+  background:
+    radial-gradient(60% 50% at 15% 10%, rgba(245, 197, 66, 0.1), transparent 70%),
+    radial-gradient(50% 45% at 90% 25%, rgba(120, 84, 200, 0.12), transparent 70%),
+    radial-gradient(70% 60% at 50% 110%, rgba(245, 160, 40, 0.1), transparent 70%),
+    linear-gradient(180deg, #05050a 0%, #080713 55%, #05050a 100%);
+}
+
+.gp-star {
+  position: absolute;
+  border-radius: 9999px;
+  background: #fff6d8;
+  opacity: 0.5;
+  animation: gp-twinkle var(--d, 4s) ease-in-out var(--delay, 0s) infinite;
+}
+
+.gp-star.is-gold {
+  background: var(--gp-gold);
+  box-shadow: 0 0 6px 1px rgba(245, 197, 66, 0.6);
+}
+
+@keyframes gp-twinkle {
+  0%, 100% { opacity: 0.15; transform: scale(0.8); }
+  50% { opacity: 0.95; transform: scale(1.15); }
+}
+
+.gp-meteors {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+/* ------------------------------------------------------------------
+   Type + text helpers
+------------------------------------------------------------------- */
+.font-display {
+  letter-spacing: -0.03em;
+}
+
+.gp-gold-text {
+  background: linear-gradient(120deg, #fff1b8 0%, #f5c542 40%, #c99a2e 80%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.gp-eyebrow {
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--gp-gold);
+}
+
+/* ------------------------------------------------------------------
+   Surfaces
+------------------------------------------------------------------- */
+@layer components {
+  .gp-card {
+    position: relative;
+    background: var(--gp-card);
+    border: 1px solid var(--gp-line);
+    border-radius: 1.25rem;
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    transition: border-color 0.3s var(--gp-ease), box-shadow 0.3s var(--gp-ease), transform 0.3s var(--gp-ease);
+  }
+
+  .gp-card-hover:hover {
+    border-color: var(--gp-line-strong);
+    box-shadow: var(--gp-glow);
+    transform: translateY(-3px);
+  }
+
+  .gp-inner {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 0.9rem;
+  }
+
+  .gp-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    min-height: 44px;
+    padding: 0 1.25rem;
+    border-radius: 9999px;
+    font-weight: 600;
+    font-size: 0.925rem;
+    line-height: 1.25;
+    text-align: center;
+    text-wrap: balance;
+    padding-block: 0.4rem;
+    cursor: pointer;
+    transition: transform 0.2s var(--gp-ease), box-shadow 0.3s var(--gp-ease), background 0.2s, border-color 0.2s, color 0.2s;
+  }
+
+  .gp-btn:active:not(:disabled) {
+    transform: scale(0.97);
+  }
+
+  .gp-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+
+  .gp-btn-primary {
+    color: #1a1204;
+    background: linear-gradient(135deg, #ffe08a 0%, #f5c542 45%, #d4a02a 100%);
+    box-shadow: 0 0 0 1px rgba(255, 224, 138, 0.5), 0 8px 28px -10px rgba(245, 197, 66, 0.7);
+  }
+
+  .gp-btn-primary:hover:not(:disabled) {
+    box-shadow: 0 0 0 1px rgba(255, 224, 138, 0.8), 0 10px 38px -6px rgba(245, 197, 66, 0.85);
+    transform: translateY(-1px);
+  }
+
+  .gp-btn-ghost {
+    color: var(--gp-ink);
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid var(--gp-line);
+  }
+
+  .gp-btn-ghost:hover:not(:disabled) {
+    border-color: var(--gp-line-strong);
+    color: var(--gp-gold);
+    background: rgba(245, 197, 66, 0.07);
+  }
+
+  .gp-btn-sm {
+    min-height: 36px;
+    padding: 0 0.9rem;
+    font-size: 0.82rem;
+    white-space: nowrap;
+  }
+
+  .gp-progress {
+    height: 6px;
+    border-radius: 9999px;
+    background: rgba(255, 255, 255, 0.1);
+    overflow: hidden;
+  }
+  .gp-progress > span {
+    display: block;
+    height: 100%;
+    background: linear-gradient(90deg, var(--gp-gold), #fff1b8);
+    transition: width 0.2s ease;
+  }
+
+  .gp-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.3rem 0.75rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: var(--gp-gold);
+    background: rgba(245, 197, 66, 0.08);
+    border: 1px solid var(--gp-line);
+  }
+
+  .gp-input {
+    width: 100%;
+    min-height: 44px;
+    padding: 0 0.9rem;
+    color: var(--gp-ink);
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid var(--gp-line);
+    border-radius: 0.75rem;
+  }
+
+  .gp-seg {
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: 1fr;
+    gap: 4px;
+    padding: 4px;
+    border-radius: 0.9rem;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+  }
+
+  .gp-seg button {
+    min-height: 38px;
+    padding: 0.25rem 0.5rem;
+    line-height: 1.2;
+    overflow-wrap: anywhere;
+    border-radius: 0.65rem;
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--gp-mist);
+    transition: color 0.2s, background 0.2s;
+  }
+
+  .gp-seg button:hover {
+    color: var(--gp-ink);
+  }
+
+  .gp-seg button[aria-checked='true'] {
+    color: #1a1204;
+    background: linear-gradient(135deg, #ffe08a, #f5c542);
+  }
+
+  .gp-drop {
+    border: 1.5px dashed rgba(245, 197, 66, 0.35);
+    border-radius: 1.25rem;
+    background: radial-gradient(80% 120% at 50% 0%, rgba(245, 197, 66, 0.07), transparent 70%), rgba(255, 255, 255, 0.02);
+    transition: border-color 0.25s, background 0.25s, box-shadow 0.25s;
+    cursor: pointer;
+  }
+
+  .gp-drop:hover,
+  .gp-drop[data-active='true'] {
+    border-color: var(--gp-gold);
+    box-shadow: var(--gp-glow);
+    background: radial-gradient(80% 120% at 50% 0%, rgba(245, 197, 66, 0.15), transparent 70%), rgba(255, 255, 255, 0.03);
+  }
+
+  .gp-checker {
+    background-color: #12101c;
+    background-image:
+      linear-gradient(45deg, rgba(255, 255, 255, 0.04) 25%, transparent 25%, transparent 75%, rgba(255, 255, 255, 0.04) 75%),
+      linear-gradient(45deg, rgba(255, 255, 255, 0.04) 25%, transparent 25%, transparent 75%, rgba(255, 255, 255, 0.04) 75%);
+    background-size: 20px 20px;
+    background-position: 0 0, 10px 10px;
+  }
+}
+
+/* ------------------------------------------------------------------
+   Range slider
+------------------------------------------------------------------- */
+.gp-range {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 28px;
+  background: transparent;
+  cursor: pointer;
+}
+
+.gp-range::-webkit-slider-runnable-track {
+  height: 4px;
+  border-radius: 9999px;
+  background: linear-gradient(90deg, var(--gp-gold) var(--pct, 50%), rgba(255, 255, 255, 0.14) var(--pct, 50%));
+}
+
+.gp-range::-moz-range-track {
+  height: 4px;
+  border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.14);
+}
+
+.gp-range::-moz-range-progress {
+  height: 4px;
+  border-radius: 9999px;
+  background: var(--gp-gold);
+}
+
+.gp-range::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 18px;
+  height: 18px;
+  margin-top: -7px;
+  border-radius: 9999px;
+  background: #fff1b8;
+  border: 2px solid var(--gp-gold);
+  box-shadow: 0 0 12px rgba(245, 197, 66, 0.7);
+}
+
+.gp-range::-moz-range-thumb {
+  width: 14px;
+  height: 14px;
+  border-radius: 9999px;
+  background: #fff1b8;
+  border: 2px solid var(--gp-gold);
+  box-shadow: 0 0 12px rgba(245, 197, 66, 0.7);
+}
+
+/* ------------------------------------------------------------------
+   Page transition + reduced motion
+------------------------------------------------------------------- */
+.gp-page {
+  animation: gp-rise 0.55s var(--gp-ease) both;
+}
+
+@keyframes gp-rise {
+  from { opacity: 0; transform: translateY(14px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes gp-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+
+.gp-float {
+  animation: gp-float 7s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .gp-star {
+    opacity: 0.5;
+  }
+}
